@@ -1,0 +1,181 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}Quiz-Result{% endblock title %}
+{% block main-content %}
+
+<div class="quiz-container container mt-4 pt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- Results Summary -->
+            <div class="card mb-4 mt-4 shadow-sm border-0">
+                <div class="card-header bg-success text-white text-center">
+                    <h3 class="card-title mb-0">Quiz Completed!</h3>
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="display-4 text-primary">{{ correct_answers }}</div>
+                            <div class="text-muted">Correct Answers</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="display-4 text-info">{{ total_questions }}</div>
+                            <div class="text-muted">Total Questions</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="display-4 {% if score_percentage >= 70 %}text-success{% elif score_percentage >= 50 %}text-warning{% else %}text-danger{% endif %}">
+                                {{ score_percentage }}%
+                            </div>
+                            <div class="text-muted">Score</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Message -->
+                    <div class="mt-4">
+                        {% if score_percentage >= 90 %}
+                            <div class="alert alert-success">
+                                <h5>🎉 Excellent Work!</h5>
+                                <p class="mb-0">You have mastered this topic! Outstanding performance!</p>
+                            </div>
+                        {% elif score_percentage >= 70 %}
+                            <div class="alert alert-info">
+                                <h5>👍 Good Job!</h5>
+                                <p class="mb-0">Solid understanding of the material. Keep up the good work!</p>
+                            </div>
+                        {% elif score_percentage >= 50 %}
+                            <div class="alert alert-warning">
+                                <h5>💪 Almost There!</h5>
+                                <p class="mb-0">You're on the right track. Some revision will help you improve.</p>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-danger">
+                                <h5>📚 Keep Learning!</h5>
+                                <p class="mb-0">Don't worry! Review the material and try again. Practice makes perfect!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Results -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Detailed Results</h5>
+                </div>
+                <div class="card-body">
+                    {% for answer in user_answers %}
+                        <div class="question-result mb-4 p-3 border rounded {% if answer.is_correct %}border-success{% else %}border-danger{% endif %}">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="mb-0">Question {{ forloop.counter }}</h6>
+                                <span class="badge {% if answer.is_correct %}bg-success{% else %}bg-danger{% endif %}">
+                                    {% if answer.is_correct %}Correct{% else %}Incorrect{% endif %}
+                                </span>
+                            </div>
+                            <p class="fw-bold">{{ answer.question.text }}</p>
+                            
+                            <div class="options-result">
+                                {% for option in answer.question.options.all %}
+                                    {# mark correct option; support correct_answer stored as a char or full string by checking first char #}
+                                    <div class="form-check mb-2
+                                                {% if option.letter == answer.question.correct_answer or option.letter == answer.question.correct_answer|slice:':1' %}correct-option{% endif %}
+                                                {% if option.letter == answer.selected_option %}selected-option{% endif %}">
+                                        <input class="form-check-input" type="radio" disabled 
+                                               {% if answer.selected_option == option.letter %}checked{% endif %}>
+                                        <label class="form-check-label w-100
+                                            {% if option.letter == answer.question.correct_answer or option.letter == answer.question.correct_answer|slice:':1' %}text-success fw-bold{% elif answer.selected_option == option.letter and not answer.is_correct %}text-danger{% endif %}">
+                                            <strong>{{ option.letter }})</strong> {{ option.text }}
+                                            {# Correct answer badge #}
+                                            {% if option.letter == answer.question.correct_answer or option.letter == answer.question.correct_answer|slice:':1' %}
+                                                <span class="badge bg-success ms-2">Correct Answer</span>
+                                            {% endif %}
+                                            {# User's selected answer badge (green if correct, red if incorrect) #}
+                                            {% if answer.selected_option == option.letter %}
+                                                {% if option.letter == answer.question.correct_answer or option.letter == answer.question.correct_answer|slice:':1' %}
+                                                    <span class="badge bg-primary ms-2">Your Answer (Correct)</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger ms-2">Your Answer (Incorrect)</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            {# If the answer is incorrect, show a clear, prominent message with the correct answer and user's choice #}
+                            {% if not answer.is_correct %}
+                                <div class="alert alert-info mt-3 mb-0 p-2">
+                                    <div class="d-flex flex-wrap gap-3 align-items-center mb-1">
+                                        <span class="fw-semibold">Correct answer:</span>
+                                        <span>
+                                            {% for opt in answer.question.options.all %}
+                                                {% if opt.letter == answer.question.correct_answer or opt.letter == answer.question.correct_answer|slice:":1" %}
+                                                    <span class="badge bg-success">{{ opt.letter }}) {{ opt.text }}</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                                        <span class="fw-semibold">Your answer:</span>
+                                        <span>
+                                            {% for opt in answer.question.options.all %}
+                                                {% if opt.letter == answer.selected_option %}
+                                                    <span class="badge bg-danger">{{ opt.letter }}) {{ opt.text }}</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <!-- Action Buttons -->
+                <div class="card-footer bg-white text-center action-buttons">
+                    <a href="{% url 'basic-quiz' %}" class="btn btn-primary btn-lg me-3">Create New Quiz</a>
+                    <button onclick="window.print()" class="btn btn-outline-secondary btn-lg">Print Results</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<style>
+.quiz-container {
+    padding-bottom: 120px; /* ensure space below content so footer doesn't cover buttons */
+}
+.action-buttons {
+    position: relative;
+    z-index: 1050; /* keep buttons above footers that may overlap */
+}
+
+/* highlight the correct option so it's obvious even if not selected */
+.options-result .correct-option {
+    border-left: 4px solid #28a745;
+    padding-left: 0.5rem;
+    background-color: rgba(40,167,69,0.04);
+    border-radius: 0.25rem;
+}
+
+/* highlight the user's selected option for quick visibility */
+.options-result .selected-option {
+    background-color: rgba(0,123,255,0.04);
+    border-radius: 0.25rem;
+    padding-left: 0.5rem;
+}
+
+/* ensure badges are clear */
+.options-result .badge {
+    font-weight: 600;
+}
+
+@media print {
+    .navbar, .btn, .alert {
+        display: none !important;
+    }
+    .question-result {
+        break-inside: avoid;
+        border: 1px solid #000 !important;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,229 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}Home{% endblock title %}
+{% block main-content %}
+
+<div class="container mt-5 py-5">
+    <h2 class="text-center mb-4">Generate Your Quiz</h2>
+
+    <!-- Error message placeholder -->
+    <div id="error_message" class="alert alert-danger d-none"></div>
+
+    <form id="quizForm" method="post" action="">
+        {% csrf_token %}
+
+        
+        <div class="form-group mb-3">
+            <label for="selection_type">Choose Category:</label>
+            <select id="selection_type" name="selection_type" class="form-control" required>
+                <option value="" selected disabled>-- Select Option --</option>
+                <option value="class"> Student </option>
+            </select>
+        </div>
+
+        <!-- Step 2: Class Dropdown -->
+        <div id="class_section" class="form-group mb-3" style="display:none;">
+            <label for="class_choice">Select Class:</label>
+            <select id="class_choice" name="class_choice" class="form-control">
+               <option value="" selected disabled>-- Select Class --</option>
+               <option value="10">Class 10</option>
+               <option value="11">Class 11</option>
+               <option value="12">Class 12</option>
+            </select>
+        </div>
+
+
+        <!-- Step 3: Subject (only for Class 12) -->
+        <div class="form-group mb-3" id="subject_section" style="display:none;">
+            <label for="subject">Select Subject:</label>
+            <select id="subject" name="subject" class="form-control">
+                <option value="" selected disabled>-- Select Subject --</option>
+            </select>
+        </div>
+
+        <!-- Step 4: Topic Dropdown -->
+        <div class="form-group mb-3">
+            <label for="topic">Select Topic:</label>
+            <select id="topic" name="topic" class="form-control" required>
+                <option value="" selected disabled>-- Select Topic --</option>
+            </select>
+        </div>
+
+        <!-- Step 5: Difficulty Dropdown -->
+        <div class="form-group mb-3">
+            <label for="difficulty">Select Difficulty:</label>
+            <select id="difficulty" name="difficulty" class="form-control" required>
+                <option value="" selected disabled>-- Select Difficulty --</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+
+        <!-- Step 6: Select Number Of Questions -->
+        <div class="form-group mb-3">
+            <label for="num_questions">Select Number Of Questions:</label>
+            <select id="num_questions" name="num_questions" class="form-control" required>
+                <option value="" selected disabled>-- Select Number Of Questions --</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+            </select>
+        </div>
+
+        <!-- Step 7: Submit -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Generate Quiz</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Show/Hide Class or Job section
+    document.getElementById("selection_type").addEventListener("change", function() {
+        let classSection = document.getElementById("class_section");
+        let subjectSection = document.getElementById("subject_section");
+
+        if (this.value === "class") {
+            classSection.style.display = "block";
+            jobSection.style.display = "none";
+            subjectSection.style.display = "none";
+        }else {
+            classSection.style.display = "none";
+            jobSection.style.display = "none";
+            subjectSection.style.display = "none";
+        }
+    });
+
+    // Topics object
+    const topics = {
+        "class": {
+            "10": ["Chemistry", "Physics", "Mathematics", "Biology", "History", "Literature"],
+            "11": ["Chemistry", "Physics", "Mathematics", "Biology", "History", "Literature"],
+            "12": ["Chemistry", "Physics", "Mathematics", "Biology", "History", "Literature"]
+        },
+        "subjects": {
+            "Mathematics": ["Algebra", "Geometry", "Calculus", "Statistics"],
+            "Physics": ["Mechanics", "Thermodynamics", "Optics", "Electromagnetism"],
+            "Chemistry": ["Organic Chemistry", "Inorganic Chemistry", "Physical Chemistry", "Analytical Chemistry"],
+            "Biology": ["Cell Biology", "Genetics", "Ecology", "Human Anatomy"],
+            "History": ["Ancient History", "Medieval History", "Modern History", "World Wars"],
+            "Literature": ["Poetry", "Novels", "Drama", "Short Stories"]
+        }
+    };
+
+    // Populate topics for class
+    document.getElementById("class_choice").addEventListener("change", function() {
+        let selectedClass = this.value;
+        let subjectDropdown = document.getElementById("subject");
+        let subjectSection = document.getElementById("subject_section");
+
+        // Reset
+        subjectDropdown.innerHTML = '<option value="" selected disabled>-- Select Subject --</option>';
+        topicDropdown.innerHTML = '<option value="" selected disabled>-- Select Topic --</option>';
+
+        // If not class 12 → load topics directly
+        if (topics["class"][selectedClass] && selectedClass !== "12" && selectedClass !== "11" && selectedClass !== "10") {
+            topics["class"][selectedClass].forEach((t, index) => {
+                topicDropdown.innerHTML += `<option value="${t}" data-id="cls-${selectedClass}-${index}">${t}</option>`;
+            });
+            subjectSection.style.display = "none";
+        }
+
+        // If class 10 → show subjects
+        if (selectedClass === "10") {
+            Object.keys(topics["subjects"]).forEach(sub => {
+                subjectDropdown.innerHTML += `<option value="${sub}">${sub}</option>`;
+            });
+            subjectSection.style.display = "block";
+        }
+        // If class 11 → show subjects
+        if (selectedClass === "11") {
+            Object.keys(topics["subjects"]).forEach(sub => {
+                subjectDropdown.innerHTML += `<option value="${sub}">${sub}</option>`;
+            });
+            subjectSection.style.display = "block";
+        }
+        // If class 12 → show subjects
+        if (selectedClass === "12") {
+            Object.keys(topics["subjects"]).forEach(sub => {
+                subjectDropdown.innerHTML += `<option value="${sub}">${sub}</option>`;
+            });
+            subjectSection.style.display = "block";
+        }
+    });
+      
+
+    // Populate topics when a subject is chosen
+    document.getElementById("subject").addEventListener("change", function() {
+        let selectedSubject = this.value;
+        let topicDropdown = document.getElementById("topic");
+
+        topicDropdown.innerHTML = '<option value="" selected disabled>-- Select Topic --</option>';
+
+        if (topics["subjects"][selectedSubject]) {
+            topics["subjects"][selectedSubject].forEach((t, index) => {
+                topicDropdown.innerHTML += `<option value="${t}" data-id="sub-${selectedSubject}-${index}">${t}</option>`;
+            });
+        }
+    });
+
+    // Form validation
+    document.getElementById("quizForm").addEventListener("submit", function(e) {
+        let selectionType = document.getElementById("selection_type").value;
+        let classChoice = document.getElementById("class_choice").value;
+        // let jobChoice = document.getElementById("job_choice").value;
+        let subject = document.getElementById("subject").value;
+        let topic = document.getElementById("topic").value;
+        let difficulty = document.getElementById("difficulty").value;
+        let numQuestions = document.getElementById("num_questions").value;
+        let errorBox = document.getElementById("error_message");
+
+        errorBox.classList.add("d-none"); 
+        errorBox.innerHTML = "";
+
+        if (!selectionType) {
+            e.preventDefault();
+            errorBox.innerHTML = "⚠️ Please select Class";
+            errorBox.classList.remove("d-none");
+            return;
+        }
+
+        if (selectionType === "class" && !classChoice) {
+            e.preventDefault();
+            errorBox.innerHTML = "⚠️ Please select a Class.";
+            errorBox.classList.remove("d-none");
+            return;
+        }
+
+        if (selectionType === "class" && classChoice === "12" && !subject) {
+            e.preventDefault();
+            errorBox.innerHTML = "⚠️ Please select a Subject for Class 12.";
+            errorBox.classList.remove("d-none");
+            return;
+        }
+
+
+        if (!topic) {
+            e.preventDefault();
+            errorBox.innerHTML = "⚠️ Please select a Topic.";
+            errorBox.classList.remove("d-none");
+            return;
+        }
+
+        if (!difficulty) {
+            e.preventDefault();
+            errorBox.innerHTML = "⚠️ Please select a Difficulty level.";
+            errorBox.classList.remove("d-none");
+            return;
+        }
+
+        if (!numQuestions) {
+            e.preventDefault();
+            errorBox.innerHTML = "⚠️ Please select Number Of Questions.";
+            errorBox.classList.remove("d-none");
+            return;
+        }
+    });
+</script>
+{% endblock main-content %}

@@ -1,0 +1,133 @@
+.owl-carousel .item{
+ /* border: 1px solid black; */
+ font-size: 24px;
+ text-align: center;
+ margin-top: 20px;;
+}
+
+.owl-next{
+ float:right;
+}
+.owl-prev{
+ float:left;
+}
+.owl-prev span{
+ font-size: 24px;
+ font-weight: bold;
+}
+.owl-next span{
+ font-size: 24px;
+ font-weight: bold;
+}
+
+#---------------------------------------------
+
+body {
+
+    /* font-family: 'Orbitron', sans-serif; */
+    /* font-family: 'Oswald', sans-serif; */
+    color:white;
+    font-family: 'Orbitron', sans-serif;
+/* font-family: 'Oswald', sans-serif; */
+    padding-bottom: 60px;
+
+}
+.header{
+  
+
+}
+.left{
+    display: inline-block;
+    /* border: 2px solid red; */
+    position: absolute;
+    top: 20px;
+    left: 34px;
+}
+.mid{
+    display: block;
+    width: 42%;
+    margin: 27px auto;
+    /* border: 2px solid rgb(166, 207, 175); */
+}
+.right{
+    display: inline-block;
+    /* border: 2px solid rgb(217, 255, 0); */
+    position: absolute;
+    top: 40px;
+    right: 34px;
+
+}
+.navbar{
+    display: inline-block;
+
+}
+.navbar li{
+    display: inline-block;
+    font-size: 18px;
+}
+.navbar li a{
+    color: white;
+    text-decoration: none;
+    padding: 25px 15px;
+}
+.navbar li a:hover, .navbar li a.Active{
+    color: gray;
+    text-decoration: underline;
+    
+}
+.left img{
+    display: block;
+    width: 85px;
+    margin: auto;
+}
+.left div{
+    text-align: center;
+    line-height: 36px;
+    font-size: 17px;
+}
+.btn{
+    font-family: 'Orbitron', sans-serif;
+    margin: 0px 10px;
+    color: white;
+    background-color: transparent;
+    padding: 4px 12px;
+    border: 2px solid gray;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.btn:hover{
+    background-color: rgb(58, 57, 57);
+}
+.container{
+    width: 33%;
+    margin: 106px 80px;
+    padding: 40px ;
+    border-radius: 20px;
+    border: 2px solid white;
+}
+.form-group input{
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
+    display: block;
+    width: 450px;
+    margin: 8px auto;
+    padding: 1px;
+    border: 1px solid black;
+    border-radius: 10px;
+    font-size: 18px;
+}
+.container h1{
+    text-align: center;
+}
+.container button{
+    display: block;
+    margin: auto;
+    width: 450px;
+    background-color: black;
+}
+.container p{
+    display: block;
+    margin: auto;
+    width: 490px;
+    font-size: 14px;
+}

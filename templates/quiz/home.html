@@ -1,0 +1,63 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}Home{% endblock title %}
+{% block main-content %}
+<div class="container py-5">
+  <div class="text-center mb-5">
+    <h2 class="fw-semibold">Welcome back{% if request.user.is_authenticated %}, {{request.user.first_name|default:request.user.username}}{% endif %}!</h2>
+    <p class="text-muted mb-0">Pick an option to get started.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-start">
+            <div class="me-3 text-primary fs-3"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div>
+              <h5 class="card-title mb-1">Start a Quiz</h5>
+              <p class="card-text text-muted">Take a new quiz and test your skills.</p>
+            </div>
+          </div>
+          <a href="{% url 'maths-quiz' %}" class="btn btn-primary mt-3">Start Quiz</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-start">
+            <div class="me-3 text-success fs-3"><i class="fa-solid fa-flask"></i></div>
+            <div>
+              <h5 class="card-title mb-1">Try Without Login</h5>
+              <p class="card-text text-muted">Quickly try a quiz without creating an account.</p>
+            </div>
+          </div>
+          <a href="{% url 'basic-quiz' %}" class="btn btn-outline-success mt-3">Start Guest Quiz</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if request.user.is_authenticated %}
+  <div class="row g-4 mt-2">
+    <div class="col-md-6">
+      <div class="card h-100 border-0 bg-light">
+        <div class="card-body p-4">
+          <h6 class="text-uppercase text-muted mb-2">Your Activity</h6>
+          <a href="{% url 'quiz_sessions' %}" class="btn btn-sm btn-outline-primary">View My Tests</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100 border-0 bg-light">
+        <div class="card-body p-4">
+          <h6 class="text-uppercase text-muted mb-2">Community</h6>
+          <a href="{% url 'quiz_leaderboard' %}" class="btn btn-sm btn-outline-secondary">View Leaderboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock main-content %}

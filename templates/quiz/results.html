@@ -1,0 +1,132 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}Results{% endblock title %}
+{% block main-content %}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-9">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+        <h2 class="mb-2 mb-md-0">Your Results{% if session %} - {{ session.title }}{% endif %}</h2>
+        <div class="text-nowrap">
+          <a href="{% url 'maths-quiz' %}" class="btn btn-primary">New Quiz</a>
+          <a href="{% url 'quiz_sessions' %}" class="btn btn-outline-secondary ms-2">My Tests</a>
+          <a href="{% url 'quiz_leaderboard' %}" class="btn btn-outline-secondary ms-2">Leaderboard</a>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <div class="row text-center g-4">
+            <div class="col-md-4">
+              <div class="fs-1 text-primary fw-semibold">{{ score }}</div>
+              <div class="text-muted">Correct Answers</div>
+            </div>
+            <div class="col-md-4">
+              <div class="fs-1 text-info fw-semibold">{{ total_questions }}</div>
+              <div class="text-muted">Total Questions</div>
+            </div>
+            <div class="col-md-4">
+              <div class="fs-1 fw-semibold {% if score_percentage >= 70 %}text-success{% elif score_percentage >= 50 %}text-warning{% else %}text-danger{% endif %}">{{ score_percentage }}%</div>
+              <div class="text-muted">Score</div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <div class="progress" role="progressbar" aria-label="Score progress" aria-valuenow="{{ score_percentage }}" aria-valuemin="0" aria-valuemax="100">
+              {% if score_percentage >= 90 %}
+                <div class="progress-bar bg-success w-100">{{ score_percentage }}%</div>
+              {% elif score_percentage >= 70 %}
+                <div class="progress-bar bg-success w-75">{{ score_percentage }}%</div>
+              {% elif score_percentage >= 50 %}
+                <div class="progress-bar bg-warning text-dark w-50">{{ score_percentage }}%</div>
+              {% elif score_percentage >= 25 %}
+                <div class="progress-bar bg-danger w-25">{{ score_percentage }}%</div>
+              {% else %}
+                <div class="progress-bar bg-danger" style="width: 5%">{{ score_percentage }}%</div>
+              {% endif %}
+            </div>
+            <p class="lead mt-3 mb-0"><strong>Total Points:</strong> {{ score }} / {{ total_questions }} (1 point per correct answer)
+              {% if session %}<span class="ms-2 text-muted">({{ session.created_at|date:"d M Y, h:i A" }})</span>{% endif %}
+            </p>
+          </div>
+
+          <div class="mt-4">
+            {% if score_percentage >= 90 %}
+              <div class="alert alert-success mb-0">
+                <h5 class="mb-1">🎉 Excellent Work!</h5>
+                <p class="mb-0">You have mastered this topic! Outstanding performance!</p>
+              </div>
+            {% elif score_percentage >= 70 %}
+              <div class="alert alert-info mb-0">
+                <h5 class="mb-1">👍 Good Job!</h5>
+                <p class="mb-0">Solid understanding of the material. Keep up the good work!</p>
+              </div>
+            {% elif score_percentage >= 50 %}
+              <div class="alert alert-warning mb-0">
+                <h5 class="mb-1">💪 Almost There!</h5>
+                <p class="mb-0">You're on the right track. Some revision will help you improve.</p>
+              </div>
+            {% else %}
+              <div class="alert alert-danger mb-0">
+                <h5 class="mb-1">📚 Keep Learning!</h5>
+                <p class="mb-0">Don't worry! Review the material and try again. Practice makes perfect!</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {% for item in breakdown %}
+        <div class="card shadow-sm border-0 mb-3">
+          <div class="card-header bg-white">
+            <div class="d-flex justify-content-between align-items-center">
+              <span>Q {{ forloop.counter }}</span>
+              {% if item.is_correct %}
+                <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Correct</span>
+              {% else %}
+                <span class="badge bg-danger"><i class="fa-solid fa-xmark me-1"></i>Incorrect</span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ item.question_text }}</h5>
+            <ul class="list-group list-group-flush mt-2">
+              {% for opt in item.options %}
+                <li class="list-group-item d-flex justify-content-between align-items-start {% if opt == item.selected and item.is_correct %}border-success{% endif %}">
+                  <span>{% if opt == item.correct %}<strong>{{ opt }}</strong>{% else %}{{ opt }}{% endif %}</span>
+                  <span>
+                    {% if opt == item.correct %}
+                      <span class="badge bg-success ms-2">Correct answer</span>
+                    {% endif %}
+                    {% if opt == item.selected %}
+                      <span class="badge {% if item.is_correct %}bg-success{% else %}bg-danger{% endif %} ms-2">Your choice</span>
+                    {% endif %}
+                  </span>
+                </li>
+              {% endfor %}
+            </ul>
+            <div class="mt-3">
+              {% if item.is_correct %}
+                <span class="badge bg-success">Points: 1</span>
+              {% else %}
+                <div class="alert alert-light border mb-0">Correct Answer: <strong>{{ item.correct }}</strong></div>
+                <span class="badge bg-secondary mt-2">Points: 0</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-muted">No answers recorded.</p>
+      {% endfor %}
+
+      <div class="d-flex mt-4">
+        <a href="{% url 'maths-quiz' %}" class="btn btn-primary">New Quiz</a>
+        <a href="{% url 'quiz_sessions' %}" class="btn btn-outline-secondary ms-2">View All Test Results</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock main-content %}
+
+

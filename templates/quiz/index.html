@@ -1,0 +1,54 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}Welcome{% endblock title %}
+{% block main-content %}
+
+<section class="py-5 text-center bg-primary text-white">
+  <div class="container py-5">
+    <h1 class="display-5 fw-bold">Challenge your knowledge</h1>
+    <p class="lead mb-4">Take engaging quizzes across topics, track your progress, and compete on the leaderboard.</p>
+    <div>
+      <a href="{% url 'home' %}" class="btn btn-light btn-lg me-2">Get Started</a>
+      {% if request.user.is_authenticated %}
+      <a href="{% url 'maths-quiz' %}" class="btn btn-outline-light btn-lg">Start a Quiz</a>
+      {% else %}
+      <a href="{% url 'basic-quiz' %}" class="btn btn-outline-light btn-lg">Try Without Login</a>
+      {% endif %}
+    </div>
+  </div>
+  <svg class="position-absolute start-0 end-0" style="bottom:-1px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#f8f9fa" fill-opacity="1" d="M0,224L80,229.3C160,235,320,245,480,250.7C640,256,800,256,960,261.3C1120,267,1280,277,1360,282.7L1440,288L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"></path></svg>
+</section>
+
+<section class="bg-light py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Smart Questioning</h5>
+            <p class="card-text text-muted">Carefully crafted questions to test concepts, not memorization.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Track Progress</h5>
+            <p class="card-text text-muted">Review past sessions and monitor your improvement over time.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Compete</h5>
+            <p class="card-text text-muted">Climb the leaderboard and share your achievements.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</section>
+
+{% endblock main-content %}

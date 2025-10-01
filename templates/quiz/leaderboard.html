@@ -1,0 +1,39 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}Leaderboard{% endblock title %}
+{% block main-content %}
+
+<div class="container pt-5">
+ <div class="row m-5">
+  <div class="col-sm-8 offset-sm-2">
+    <h2>Leaderboard</h2>
+    <p>Top users by total score.</p>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Total Score</th>
+          <th>Total Questions</th>
+          <th>Last Played</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in top_users %}
+          <tr {% if u.id == current_user_id %}class="table-primary"{% endif %}>
+            <td>{{ u.username }}</td>
+            <td>{{ u.total_score }}</td>
+            <td>{{ u.total_questions }}</td>
+            <td>{% if u.last_played %}{{ u.last_played|date:"d M Y, h:i A" }}{% else %}-{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No users yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+ </div>
+</div>
+
+{% endblock main-content %}
+
+
